@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>CSV File Upload and Display</title>
+        <link rel="stylesheet" href="styles.css"/>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/cron"></script> -->
+    </head>
+    <body>
+        <div class="center">
+
+            <div class="button-container">
+                <input type="file" id="csvFileInput"/>
+                <button class="export-buttons" onclick="displayTable()">
+                    Display CSV Table
+                </button>
+                
+                <button class="export-buttons" onclick="callLocalAPIButtonOld()">
+                    Call Local API
+                </button>
+                <button class="export-buttonss" onclick="calculateAndDisplayDistancesWithStatus()">
+                    Calculate Distances and Status
+                </button>
+
+                <button class="export-button" onclick="exportToCSV()">
+                    <img src="export.png" alt="Logo" class="logo"/>
+                    Export to CSV
+                </button>
+                <button class="export-button" onclick="exportMetricsToCSV()">
+                    <img src="export.png" alt="Logo" class="logo"/>Export Request Rate to
+                          CSV
+                </button>
+
+            </div>
+            <div class="table-container">
+
+                <div id="distanceTableContainer"></div>
+                <div id="tableContainer"></div>
+                <div id="apiResponseTableContainer"></div>
+                <div id="combinedTableContainer"></div>
+                <div id="metricsTableContainer"></div>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
