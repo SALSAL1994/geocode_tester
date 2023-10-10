@@ -16,7 +16,7 @@
                     Display CSV Table
                 </button>
                 
-                <button class="export-buttons" onclick="callLocalAPIButtonOld()">
+                <button class="export-buttons" onclick="callLocalAPIWithBatchSize()">
                     Call Local API
                 </button>
                 <button class="export-buttonss" onclick="calculateAndDisplayDistancesWithStatus()">
@@ -31,7 +31,8 @@
                     <img src="export.png" alt="Logo" class="logo"/>Export Request Rate to
                           CSV
                 </button>
-
+            
+                
             </div>
             <div class="table-container">
 
@@ -40,9 +41,25 @@
                 <div id="apiResponseTableContainer"></div>
                 <div id="combinedTableContainer"></div>
                 <div id="metricsTableContainer"></div>
+                
+
             </div>
+            
         </div>
 
         <script src="script.js"></script>
+        <script>
+            // Function to handle calling Local API with a specified batch size
+            function callLocalAPIWithBatchSize() {
+                const batchSize = prompt("Please provide batch size per second:");
+                if (batchSize === null || isNaN(batchSize) || batchSize <= 0) {
+                    alert("Invalid batch size. Please enter a positive number.");
+                    return;
+                }
+    
+                const parsedBatchSize = parseInt(batchSize);
+                callLocalAPIButtonOld(parsedBatchSize);
+            }
+        </script>
     </body>
 </html>

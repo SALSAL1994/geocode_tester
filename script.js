@@ -1,4 +1,5 @@
 let salar = [];
+let accuracy;
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -194,8 +195,10 @@ async function callLocalAPIButton(config) {
   const intervalId = setInterval(() => batchFunction(intervalId), 1000);
 }
 
-async function callLocalAPIButtonOld() {
-  const batchSize = 50; 
+
+
+async function callLocalAPIButtonOld(batchSize) {
+  // const batchSize = 50; 
   const totalRequests = salar.length;
   let startTime = Date.now();
   let successfulRequests = 0;
@@ -215,7 +218,7 @@ async function callLocalAPIButtonOld() {
           const response = await fetchWithTimeout(
             apiUrl,
             { method: "GET", headers: { "Content-Type": "application/json" }},
-            10000
+            12000
           );
           if (response.ok) {
             const data = await response.json();
@@ -258,17 +261,21 @@ async function callLocalAPIButtonOld() {
     const requestRate = totalRequests / totalTime;
 
     let metricsTableHtml = '<table border="1">';
-    metricsTableHtml += `<tr><th>Total Requests</th><td>${totalRequests}</td></tr>`;
-    metricsTableHtml += `<tr><th>Successful Requests</th><td>${successfulRequests}</td></tr>`;
+    metricsTableHtml += `<tr><th>Total Requests</th><td>${totalRequests}</td></tr>  `;
+    
+    metricsTableHtml += `<tr><th>Successful reponse</th><td>${successfulRequests}</td></tr>`;
     metricsTableHtml += `<tr><th>Failed Requests</th><td>${failedRequests}</td></tr>`;
     metricsTableHtml += `<tr><th>Successful Request Rate</th><td>${successfulRate.toFixed(
       2
-    )}%</td></tr>`;
-    metricsTableHtml += `<tr><th>Total Time</th><td>${totalTime} seconds</td></tr>`;
-    metricsTableHtml += `<tr><th>Request Rate</th><td>${requestRate.toFixed(
-      2
-    )} requests per second</td></tr>`;
+      )}%</td></tr>`;
+      metricsTableHtml += `<tr><th>Total Time</th><td>${totalTime} seconds</td></tr>`;
+      
+      metricsTableHtml += `<tr><th>reponse Rate</th><td>${requestRate.toFixed(
+        2
+        )} response per second</td></tr>`;
+        metricsTableHtml += `<tr><th>accuracy</th><td id="distancesLessThan100m"></td></tr> `;
     metricsTableHtml += "</table>";
+    
 
     document.getElementById("metricsTableContainer").innerHTML =
       metricsTableHtml;
@@ -325,6 +332,7 @@ function calculateAndDisplayDistancesWithStatus() {
   const rows2 = table2.getElementsByTagName("tr");
 
   if (rows1.length > 1 && rows2.length > 1) {
+    let countDistancesLessThan100m = 0;
     let combinedTableHtml = '<table border="1">';
     combinedTableHtml += "<tr><th>Distance (meters)</th><th>Status</th></tr>";
 
@@ -346,24 +354,28 @@ function calculateAndDisplayDistancesWithStatus() {
 
       // Determine status based on distance
       const isLessThan100m = distance < 100;
-      const statusClass = isLessThan100m ? "green-dot" : "red-dot";
+      countDistancesLessThan100m += isLessThan100m ? 1 : 0;
 
       // Add a new row to the combined table with distance and status
-      combinedTableHtml += "<tr>";
-      combinedTableHtml += `<td>${distance.toFixed(2)}</td>`;
-      combinedTableHtml += `<td><div class="dot ${statusClass}"></div></td>`;
-      combinedTableHtml += "</tr>";
+      const statusClass = isLessThan100m ? "green-dot" : "red-dot";
+      combinedTableHtml += `<tr><td>${distance.toFixed(2)}</td><td><div class="dot ${statusClass}"></div></td></tr>`;
     }
 
     combinedTableHtml += "</table>";
 
+    // Calculate the ratio of distances less than 100 meters to total requests
+    const totalRequests = salar.length;
+    const ratio = countDistancesLessThan100m / totalRequests;
+
+    // Update the metric table with the count and the ratio
+    const distancesLessThan100mCell = document.getElementById("distancesLessThan100m");
+    distancesLessThan100mCell.innerText = `${countDistancesLessThan100m} (${(ratio * 100).toFixed(2)}%)`;
+
     // Display the combined table in the designated container
-    const combinedTableContainer = document.getElementById(
-      "combinedTableContainer"
-    );
+    const combinedTableContainer = document.getElementById("combinedTableContainer");
     combinedTableContainer.innerHTML = combinedTableHtml;
   } else {
-    alert("show the table first");
+    alert("Show the table first");
   }
 }
 
